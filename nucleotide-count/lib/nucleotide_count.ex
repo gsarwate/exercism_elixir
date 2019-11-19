@@ -16,8 +16,7 @@ defmodule NucleotideCount do
   @spec count(charlist(), char()) :: non_neg_integer()
   def count(strand, nucleotide) do
     strand
-    |> Enum.filter(fn c -> c == nucleotide end)
-    |> Enum.count()
+    |> Enum.reduce(_count = 0, &count_matching_nucleotides(nucleotide, &1, &2))
   end
 
   @doc """
@@ -33,4 +32,7 @@ defmodule NucleotideCount do
     strand
     |> Enum.reduce(@histogram, &Map.update(&2, &1, 0, fn v -> v + 1 end))
   end
+
+  defp count_matching_nucleotides(nucleotide, char, count) when char == nucleotide, do: count + 1
+  defp count_matching_nucleotides(_nucleotide, _char, count), do: count
 end
